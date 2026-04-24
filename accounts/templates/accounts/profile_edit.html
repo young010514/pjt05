@@ -1,0 +1,92 @@
+{% extends "community/base.html" %}
+{% block title %}프로필 수정 | 금융 자산 커뮤니티{% endblock %}
+{% block extra_css %}
+<style>
+  .edit-shell {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .edit-card {
+    padding: 30px;
+    border-radius: 30px;
+    background: #fff;
+    border: 1px solid rgba(17, 24, 39, 0.06);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .edit-grid {
+    display: grid;
+    gap: 18px;
+  }
+
+  .form-row {
+    display: grid;
+    gap: 8px;
+  }
+
+  .form-errors {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--danger);
+    font-size: 0.9rem;
+  }
+
+  .edit-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="breadcrumb">
+  <a href="{% url 'community:asset_list' %}">자산 목록</a>
+  <span class="breadcrumb-sep">/</span>
+  <a href="{% url 'accounts:profile' %}">내 프로필</a>
+  <span class="breadcrumb-sep">/</span>
+  <span>프로필 수정</span>
+</div>
+
+<section class="edit-shell">
+  <div class="edit-card">
+    <span class="eyebrow">Edit Profile</span>
+    <h1 class="page-title mt-2">프로필 수정</h1>
+    <p class="lede mt-2">닉네임과 프로필 이미지를 변경할 수 있습니다.</p>
+
+    <form method="post" enctype="multipart/form-data" class="edit-grid mt-2">
+      {% csrf_token %}
+      <div class="form-row">
+        <label for="{{ profile_form.nickname.id_for_label }}">{{ profile_form.nickname.label }}</label>
+        {{ profile_form.nickname }}
+        {% if profile_form.nickname.errors %}
+        <ul class="form-errors">
+          {% for error in profile_form.nickname.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ profile_form.profile_image.id_for_label }}">{{ profile_form.profile_image.label }}</label>
+        {{ profile_form.profile_image }}
+        {% if profile_form.profile_image.errors %}
+        <ul class="form-errors">
+          {% for error in profile_form.profile_image.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="edit-actions">
+        <a href="{% url 'accounts:profile' %}" class="btn btn-secondary">취소</a>
+        <button type="submit" class="btn btn-primary">저장</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

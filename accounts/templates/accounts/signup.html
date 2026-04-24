@@ -1,0 +1,178 @@
+{% extends "community/base.html" %}
+{% block title %}회원가입 | 금융 자산 커뮤니티{% endblock %}
+{% block extra_css %}
+<style>
+  .auth-shell {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .auth-card {
+    padding: 30px;
+    border-radius: 30px;
+    background: #fff;
+    border: 1px solid rgba(17, 24, 39, 0.06);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .auth-grid {
+    display: grid;
+    gap: 18px;
+  }
+
+  .form-row {
+    display: grid;
+    gap: 8px;
+  }
+
+  .form-input {
+    padding: 16px 18px;
+  }
+
+  .form-help {
+    margin: 0;
+    color: var(--text-soft);
+    font-size: 0.84rem;
+  }
+
+  .form-errors {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--danger);
+    font-size: 0.9rem;
+  }
+
+  .checkbox-grid {
+    padding: 18px;
+    border-radius: 22px;
+    background: var(--panel-soft);
+    border: 1px solid rgba(17, 24, 39, 0.05);
+  }
+
+  .checkbox-grid ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  .checkbox-grid label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .submit-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<section class="auth-shell">
+  <div class="auth-card">
+    <span class="eyebrow">Create Account</span>
+    <h1 class="page-title mt-2">회원가입</h1>
+    <p class="lede mt-2">아이디와 프로필 정보를 입력하면 가입 직후 바로 로그인됩니다.</p>
+
+    <form method="post" enctype="multipart/form-data" class="auth-grid mt-2">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+      <ul class="form-errors">
+        {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      <div class="form-row">
+        <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+        {{ form.username }}
+        {% if form.username.help_text %}<p class="form-help">{{ form.username.help_text|safe }}</p>{% endif %}
+        {% if form.username.errors %}
+        <ul class="form-errors">
+          {% for error in form.username.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+        {{ form.password1 }}
+        {% if form.password1.help_text %}<p class="form-help">{{ form.password1.help_text|safe }}</p>{% endif %}
+        {% if form.password1.errors %}
+        <ul class="form-errors">
+          {% for error in form.password1.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+        {{ form.password2 }}
+        {% if form.password2.help_text %}<p class="form-help">{{ form.password2.help_text|safe }}</p>{% endif %}
+        {% if form.password2.errors %}
+        <ul class="form-errors">
+          {% for error in form.password2.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ form.nickname.id_for_label }}">{{ form.nickname.label }}</label>
+        {{ form.nickname }}
+        {% if form.nickname.errors %}
+        <ul class="form-errors">
+          {% for error in form.nickname.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ form.profile_image.id_for_label }}">{{ form.profile_image.label }}</label>
+        {{ form.profile_image }}
+        {% if form.profile_image.errors %}
+        <ul class="form-errors">
+          {% for error in form.profile_image.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="form-row">
+        <label>{{ form.interest_stocks.label }}</label>
+        <div class="checkbox-grid">{{ form.interest_stocks }}</div>
+        {% if form.interest_stocks.errors %}
+        <ul class="form-errors">
+          {% for error in form.interest_stocks.errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="submit-row">
+        <p class="text-muted mb-0">이미 계정이 있나요? <a href="{% url 'accounts:login' %}">로그인하기</a></p>
+        <button type="submit" class="btn btn-primary">가입하기</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
