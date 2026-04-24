@@ -13,13 +13,17 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = None
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # .env 로드 (OPENAI_API_KEY 등)
-load_dotenv(BASE_DIR / ".env")
+if load_dotenv is not None:
+    load_dotenv(BASE_DIR / ".env")
 
 # [심화] LLM 부적절 댓글 필터링 관련
 # LLM 공급자 선택 (OPENAI / UPSTAGE)
@@ -52,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
     'community',
 ]
 
@@ -95,6 +100,8 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = "accounts.CustomUser"
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -130,3 +137,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"

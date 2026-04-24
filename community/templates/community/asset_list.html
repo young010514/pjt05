@@ -1,53 +1,204 @@
 {% extends "community/base.html" %}
-{% block title %}금융 자산 목록 | 금융 자산 커뮤니티{% endblock %}
+{% block title %}금융 자산 탐색 | 금융 자산 커뮤니티{% endblock %}
 {% block extra_css %}
 <style>
-  .asset-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+    gap: 18px;
+    margin-bottom: 28px;
   }
-  .asset-list .asset-item {
-    margin: 0;
+
+  .hero-main,
+  .hero-side {
+    border-radius: 30px;
+    overflow: hidden;
   }
-  .asset-list .asset-link {
-    font-size: 1.0625rem;
-    font-weight: 600;
+
+  .hero-main {
+    padding: 34px;
+    background: #ffffff;
+    border: 1px solid rgba(17, 24, 39, 0.06);
+    box-shadow: var(--shadow-sm);
   }
-  .asset-list .asset-meta {
+
+  .hero-main .page-title {
+    max-width: 620px;
+  }
+
+  .hero-metrics {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem 1rem;
-    margin-top: 0.5rem;
-    font-size: 0.8125rem;
+    gap: 12px;
+    margin-top: 22px;
   }
-  .asset-list .asset-desc {
-    margin: 0.375rem 0 0 0;
-    line-height: 1.5;
+
+  .hero-metric {
+    min-width: 150px;
+    padding: 16px 18px;
+    border-radius: 22px;
+    background: var(--panel-soft);
+    border: 1px solid rgba(17, 24, 39, 0.05);
   }
-  .asset-list .empty {
-    padding: 2rem;
+
+  .hero-metric strong {
+    display: block;
+    font-size: 1.25rem;
+    letter-spacing: -0.04em;
+  }
+
+  .hero-metric span {
+    display: block;
+    margin-top: 4px;
+    color: var(--text-soft);
+    font-size: 0.84rem;
+  }
+
+  .hero-side {
+    display: grid;
+    gap: 12px;
+  }
+
+  .hero-note {
+    padding: 24px;
+    border-radius: 28px;
+    background: #ffffff;
+    border: 1px solid rgba(17, 24, 39, 0.06);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .hero-note strong {
+    display: block;
+    font-size: 1.05rem;
+    letter-spacing: -0.03em;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .asset-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .asset-link {
+    display: block;
+    padding: 24px;
+  }
+
+  .asset-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .asset-title {
+    font-size: 1.16rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+
+  .asset-arrow {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 1rem;
+  }
+
+  .asset-desc {
+    margin: 0 0 18px;
+    color: var(--text-soft);
+  }
+
+  .empty {
+    padding: 44px 22px;
     text-align: center;
-    color: var(--color-text-muted);
+    color: var(--text-soft);
+  }
+
+  @media (max-width: 920px) {
+    .hero,
+    .asset-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
 {% endblock %}
 {% block content %}
-<h1 class="page-title">금융 자산 목록</h1>
-<p class="text-muted mb-0">자산을 선택하면 해당 토론 게시판으로 이동합니다.</p>
-<ul class="asset-list mt-2">
-  {% for asset in assets %}
-  <li class="asset-item card-item">
-    <a href="{% url 'community:board' asset.id %}" class="asset-link">{{ asset.name }}</a>
-    <span class="text-muted">({{ asset.category }})</span>
-    <p class="text-muted asset-desc">{{ asset.description|truncatewords:30 }}</p>
-    <div class="asset-meta text-muted">위험도: {{ asset.risk_level }}</div>
-  </li>
-  {% empty %}
-  <li class="empty">등록된 금융 자산이 없습니다. data/assets.json을 확인하세요.</li>
-  {% endfor %}
-</ul>
+<section class="hero">
+  <div class="hero-main">
+    <span class="eyebrow">StyleSeed Inspired</span>
+    <h1 class="page-title mt-2">한 가지 강조색과<br>정돈된 정보 구조로<br>자산 흐름을 읽습니다.</h1>
+    <p class="lede mt-2">주식, 금, 채권, 비트코인까지. 관심 자산을 고르고 해당 게시판에서 곧바로 의견과 인사이트를 확인해보세요.</p>
+    <div class="hero-metrics">
+      <div class="hero-metric">
+        <strong>{{ assets|length }}</strong>
+        <span>탐색 가능한 자산</span>
+      </div>
+      <div class="hero-metric">
+        <strong>단일 흐름</strong>
+        <span>복잡하지 않은 토론 구조</span>
+      </div>
+    </div>
+  </div>
+
+  <aside class="hero-side">
+    <div class="hero-note">
+      <strong>절제된 인터페이스</strong>
+      <p class="lede mt-1">과한 색과 장식보다 여백, 위계, 카드 분리에 집중해 중요한 정보가 먼저 보이도록 구성했습니다.</p>
+    </div>
+    <div class="hero-note">
+      <strong>바로 이동</strong>
+      <p class="lede mt-1">자산 카드를 누르면 해당 게시판으로 바로 이동해 지금 오가는 대화를 이어서 볼 수 있습니다.</p>
+    </div>
+  </aside>
+</section>
+
+<section>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Browse Assets</span>
+      <h2 class="section-title mt-1">지금 둘러볼 자산</h2>
+    </div>
+    <p class="text-muted mb-0">원하는 자산을 선택해 게시판으로 이동하세요.</p>
+  </div>
+
+  <ul class="asset-grid">
+    {% for asset in assets %}
+    <li class="card-item">
+      <a href="{% url 'community:board' asset.id %}" class="asset-link">
+        <div class="asset-top">
+          <div>
+            <div class="asset-title">{{ asset.name }}</div>
+            <div class="text-muted mt-1">{{ asset.category }}</div>
+          </div>
+          <div class="asset-arrow">↗</div>
+        </div>
+        <p class="asset-desc">{{ asset.description|truncatewords:28 }}</p>
+        <div class="meta-row">
+          <span class="badge">위험도 {{ asset.risk_level }}</span>
+          <span class="badge">게시판 보기</span>
+        </div>
+      </a>
+    </li>
+    {% empty %}
+    <li class="empty">표시할 자산이 없습니다. `data/assets.json` 파일을 확인해주세요.</li>
+    {% endfor %}
+  </ul>
+</section>
 {% endblock %}

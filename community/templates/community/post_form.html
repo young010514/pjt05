@@ -1,56 +1,90 @@
 {% extends "community/base.html" %}
-{% block title %}{% if is_edit %}글 수정{% else %}글쓰기 | {{ asset.name }} | 금융 자산 커뮤니티{% endif %}{% endblock %}
+{% block title %}{% if is_edit %}글 수정{% else %}글쓰기{% endif %} | {{ asset.name }}{% endblock %}
 {% block extra_css %}
 <style>
+  .form-shell {
+    max-width: 780px;
+  }
+
+  .form-card {
+    padding: 30px;
+    border-radius: 30px;
+    background: #fff;
+    border: 1px solid rgba(17, 24, 39, 0.06);
+    box-shadow: var(--shadow-sm);
+  }
+
   .form-group {
-    margin-bottom: 1.25rem;
+    margin-bottom: 20px;
   }
-  .form-input-full {
-    width: 100%;
-    padding: 0.625rem 0.75rem;
-  }
-  .form-input-author {
-    width: 100%;
-    max-width: 240px;
-    padding: 0.5rem 0.75rem;
-  }
+
+  .form-input-full,
   .form-textarea {
-    width: 100%;
-    padding: 0.75rem;
-    min-height: 200px;
+    padding: 16px 18px;
+  }
+
+  .form-textarea {
+    min-height: 240px;
     resize: vertical;
   }
+
+  .author-display {
+    display: inline-flex;
+    align-items: center;
+    min-height: 50px;
+    padding: 0 18px;
+    border-radius: 18px;
+    background: var(--panel-soft);
+    border: 1px solid rgba(17, 24, 39, 0.06);
+    color: var(--text);
+    font-weight: 600;
+  }
+
   .form-actions {
-    margin-top: 1.5rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
   }
 </style>
 {% endblock %}
 {% block content %}
-<p class="breadcrumb">
-  <a href="{% url 'community:asset_list' %}">자산 목록</a> &gt;
-  <a href="{% url 'community:board' asset.id %}">{{ asset.name }}</a> &gt;
-  {% if is_edit %}글 수정{% else %}글쓰기{% endif %}
-</p>
-<h1 class="page-title">{{ asset.name }} — {% if is_edit %}글 수정{% else %}글쓰기{% endif %}</h1>
-<form method="post" class="mt-2">
-  {% csrf_token %}
-  <div class="form-group">
-    <label for="id_title">제목</label>
-    <input id="id_title" type="text" name="title" value="{{ title|default:'' }}" required maxlength="200" class="form-input-full">
+<div class="breadcrumb">
+  <a href="{% url 'community:asset_list' %}">자산 목록</a>
+  <span class="breadcrumb-sep">/</span>
+  <a href="{% url 'community:board' asset.id %}">{{ asset.name }}</a>
+  <span class="breadcrumb-sep">/</span>
+  <span>{% if is_edit %}글 수정{% else %}글쓰기{% endif %}</span>
+</div>
+
+<section class="form-shell">
+  <div class="form-card">
+    <span class="eyebrow">{{ asset.category }}</span>
+    <h1 class="page-title mt-2">{% if is_edit %}글을 다듬어보세요{% else %}새 글을 작성해보세요{% endif %}</h1>
+    <p class="lede mt-2">{{ asset.name }} 게시판에 생각을 남길 수 있습니다.</p>
+
+    <form method="post" class="mt-2">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="id_title">제목</label>
+        <input id="id_title" type="text" name="title" value="{{ title|default:'' }}" required maxlength="200" class="form-input-full">
+      </div>
+
+      <div class="form-group">
+        <label>작성자</label>
+        <div class="author-display">{{ request.user.username }}</div>
+      </div>
+
+      <div class="form-group">
+        <label for="id_content">내용</label>
+        <textarea id="id_content" name="content" rows="10" required class="form-textarea">{{ content|default:'' }}</textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{% if is_edit %}수정 완료{% else %}등록{% endif %}</button>
+        <a href="{% url 'community:board' asset.id %}" class="btn btn-secondary">취소</a>
+      </div>
+    </form>
   </div>
-  <div class="form-group">
-    <label for="id_author">작성자 (선택)</label>
-    <input id="id_author" type="text" name="author" value="{{ author|default:'' }}" placeholder="익명" maxlength="150" class="form-input-author">
-  </div>
-  <div class="form-group">
-    <label for="id_content">내용</label>
-    <textarea id="id_content" name="content" rows="10" required class="form-textarea">{{ content|default:'' }}</textarea>
-  </div>
-  <div class="form-actions btn-group">
-    <button type="submit" class="btn">{% if is_edit %}수정 저장{% else %}등록{% endif %}</button>
-    <a href="{% url 'community:board' asset.id %}" class="btn btn-secondary">취소</a>
-  </div>
-</form>
+</section>
 {% endblock %}

@@ -1,0 +1,241 @@
+{% extends "community/base.html" %}
+{% block title %}내 프로필 | 금융 자산 커뮤니티{% endblock %}
+{% block extra_css %}
+<style>
+  .profile-layout {
+    display: grid;
+    gap: 18px;
+  }
+
+  .profile-hero {
+    display: grid;
+    grid-template-columns: 112px 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 28px;
+    border-radius: 30px;
+    background: #fff;
+    border: 1px solid rgba(17, 24, 39, 0.06);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .profile-image {
+    width: 112px;
+    height: 112px;
+    border-radius: 28px;
+    object-fit: cover;
+    background: #eceff3;
+  }
+
+  .profile-image-fallback {
+    display: grid;
+    place-items: center;
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  .profile-username {
+    color: var(--text-soft);
+    font-size: 0.94rem;
+  }
+
+  .section-card {
+    padding: 26px;
+    border-radius: 28px;
+    background: #fff;
+    border: 1px solid rgba(17, 24, 39, 0.06);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .chip-list,
+  .post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
+
+  .post-list {
+    display: grid;
+    gap: 14px;
+  }
+
+  .post-link {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .empty-text {
+    margin: 0;
+    color: var(--text-soft);
+  }
+
+  .account-actions {
+    display: grid;
+    gap: 18px;
+  }
+
+  .account-action-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .danger-box {
+    padding: 20px;
+    border-radius: 22px;
+    background: rgba(229, 72, 77, 0.05);
+    border: 1px solid rgba(229, 72, 77, 0.12);
+  }
+
+  .danger-label {
+    color: var(--danger);
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+
+  .danger-form {
+    display: grid;
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  .danger-input {
+    padding: 16px 18px;
+  }
+
+  .danger-help {
+    margin: 0;
+    color: var(--text-soft);
+    font-size: 0.86rem;
+  }
+
+  @media (max-width: 760px) {
+    .profile-hero {
+      grid-template-columns: 1fr;
+      justify-items: start;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .profile-hero {
+      justify-items: center;
+      text-align: center;
+    }
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="breadcrumb">
+  <a href="{% url 'community:asset_list' %}">자산 목록</a>
+  <span class="breadcrumb-sep">/</span>
+  <span>내 프로필</span>
+</div>
+
+<section class="profile-layout">
+  <div class="profile-hero">
+    {% if profile_user.profile_image %}
+    <img src="{{ profile_user.profile_image.url }}" alt="프로필 이미지" class="profile-image">
+    {% else %}
+    <div class="profile-image profile-image-fallback">{{ profile_user.username|slice:":1"|upper }}</div>
+    {% endif %}
+
+    <div>
+      <span class="eyebrow">My Profile</span>
+      <h1 class="page-title mt-2">{{ profile_user.nickname|default:profile_user.username }}</h1>
+      <div class="profile-username mt-1">@{{ profile_user.username }}</div>
+      <p class="lede mt-2">관심 종목과 내가 작성한 게시글을 한 곳에서 확인할 수 있습니다.</p>
+    </div>
+
+    <a href="{% url 'accounts:profile_edit' %}" class="btn btn-secondary">프로필 수정</a>
+  </div>
+
+  <section class="section-card">
+    <h2 class="section-title">관심 종목</h2>
+    {% if interest_stock_names %}
+    <ul class="chip-list mt-2">
+      {% for stock_name in interest_stock_names %}
+      <li class="chip">{{ stock_name }}</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty-text mt-2">등록된 관심 종목이 없습니다.</p>
+    {% endif %}
+  </section>
+
+  <section class="section-card">
+    <h2 class="section-title">내가 작성한 게시글</h2>
+    {% if my_posts %}
+    <ul class="post-list mt-2">
+      {% for post in my_posts %}
+      <li class="card-item" style="padding: 20px 22px;">
+        <a href="{% url 'community:post_detail' post.asset_id post.id %}" class="post-link">{{ post.title }}</a>
+        <p class="text-muted mb-0 mt-1">{{ post.created_at|date:"Y-m-d H:i" }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty-text mt-2">아직 작성한 게시글이 없습니다.</p>
+    {% endif %}
+  </section>
+
+  <section class="section-card">
+    <h2 class="section-title">계정 관리</h2>
+    <div class="account-actions mt-2">
+      <div class="account-action-row">
+        <div>
+          <p class="mb-0"><strong>비밀번호 변경</strong></p>
+          <p class="text-muted mb-0 mt-1">계정 보안을 위해 새로운 비밀번호로 변경할 수 있습니다.</p>
+        </div>
+        <a href="{% url 'accounts:password_change' %}" class="btn btn-secondary">비밀번호 변경</a>
+      </div>
+
+      <div class="danger-box">
+        <div class="danger-label">회원탈퇴</div>
+        <p class="danger-help mt-1">아래 입력창에 <strong>회원탈퇴</strong>를 정확히 입력하면 계정이 삭제됩니다.</p>
+        <form action="{% url 'accounts:delete' %}" method="post" class="danger-form">
+          {% csrf_token %}
+          <input
+            type="text"
+            name="confirmation_text"
+            class="danger-input"
+            placeholder="회원탈퇴"
+            required
+          >
+          <div class="account-action-row">
+            <p class="danger-help mb-0">삭제 후에는 같은 계정으로 복구할 수 없습니다.</p>
+            <button
+              type="submit"
+              class="btn btn-danger"
+              onclick="return confirm('정말 회원탈퇴를 진행하시겠습니까?');"
+            >
+              회원탈퇴
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</section>
+{% endblock %}
